@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +18,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.api.model.CozinhasXmlWrapper;
+import com.example.demo.domain.exception.EntidadeEmUsoException;
+import com.example.demo.domain.exception.EntidadeNaoEncontradaException;
 import com.example.demo.domain.model.Cozinha;
 import com.example.demo.domain.repository.CozinhaRepository;
+import com.example.demo.domain.service.CadastroCozinhaService;
 
 @RestController
 @RequestMapping("/cozinhas")
@@ -28,6 +30,9 @@ public class CozinhaController {
 	
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
+	
+	@Autowired
+	private CadastroCozinhaService cadastroCozinha;
 	
 	@GetMapping
 	public List<Cozinha> listar(){
@@ -54,7 +59,7 @@ public class CozinhaController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cozinha adicionar(@RequestBody Cozinha cozinha){
-		return cozinhaRepository.salvar(cozinha);
+		return cadastroCozinha.salvar(cozinha);
 		
 	}
 	
@@ -79,18 +84,14 @@ public class CozinhaController {
 	@DeleteMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId){
 		try {
-			Cozinha cozinha = cozinhaRepository.buscar(cozinhaId);
-			
-			if(cozinha != null){		
-				cozinhaRepository.remover(cozinha);
-				
-				return ResponseEntity.noContent().build();
-			}
+			cadastroCozinha.excluir(cozinhaId);
 			
 			return ResponseEntity.notFound().build();
 			
-		} catch (DataIntegrityViolationException e) {
+		} catch (EntidadeEmUsoException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}catch (EntidadeNaoEncontradaException e) {
+			return ResponseEntity.notFound().build();
 		}
 	}
 
