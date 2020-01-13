@@ -8,11 +8,12 @@ import javax.transaction.Transactional;
 
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.example.demo.domain.model.Estado;
 import com.example.demo.domain.repository.EstadoRepository;
 
-@Component
+@Repository
 public class EstadoRepositoryImpl implements EstadoRepository {
 
 	@PersistenceContext
