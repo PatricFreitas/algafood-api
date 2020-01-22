@@ -59,7 +59,7 @@ public class CozinhaController {
 	}
 	
 	@PutMapping("/{cozinhaId}")
-	public ResponseEntity<Cozinha> atualizar(Long cozinhaId, Cozinha cozinha){
+	public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha){
 		
 		Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(cozinhaId);
 		
@@ -81,7 +81,7 @@ public class CozinhaController {
 		try {
 			cadastroCozinha.excluir(cozinhaId);
 			
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.noContent().build();
 			
 		} catch (EntidadeEmUsoException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
