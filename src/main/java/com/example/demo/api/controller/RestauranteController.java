@@ -1,6 +1,7 @@
 package com.example.demo.api.controller;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,6 +48,13 @@ public class RestauranteController {
 		return restaurante.isPresent() ? 
 				ResponseEntity.ok(restaurante.get()) : ResponseEntity.notFound().build();
 	}
+	
+	@GetMapping("/por-taxa-frete")
+	public List<Restaurante> buscarPorTaxaFrete(BigDecimal taxaInicial, BigDecimal taxaFinal ){
+		return restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
+	}
+	
+	
 	
 	@PostMapping	
 	public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante){
