@@ -15,31 +15,34 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-public class Produto {
+public class ItemPedido {
 	
-	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
 	private Long id;
-
-	@Column(nullable = false)
-	private String nome;
 	
 	@Column(nullable = false)
-	private String descricao;
+	private Integer quantidade;
 	
 	@Column(nullable = false)
-	private BigDecimal preco;
+	private BigDecimal precoUnitario;
 	
 	@Column(nullable = false)
-	private Boolean ativo;
-
+	private BigDecimal precoTotal;
+	
+	private String observacao;
+		
 	@JsonIgnore
 	@ManyToOne
-	@JoinColumn(nullable = false, name = "restaurante_id")
-	private Restaurante restaurante;
+	@JoinColumn(nullable = false, name = "pedido_id")
+	private Pedido pedido;
+	
+	@ManyToOne
+	@JoinColumn(nullable = false, name = "produto_id")
+	private Produto produto;
+
 }
