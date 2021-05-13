@@ -26,7 +26,8 @@ import javax.validation.groups.Default;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.example.demo.Groups;
+import com.example.demo.core.validation.Groups;
+import com.example.demo.core.validation.TaxaFrete;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
@@ -46,8 +47,9 @@ public class Restaurante {
 	@Column(nullable = false)
 	private String nome;
 	
-
-	@PositiveOrZero
+	@NotNull
+//	@PositiveOrZero
+	@TaxaFrete
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
 	
