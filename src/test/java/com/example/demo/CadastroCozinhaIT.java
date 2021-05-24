@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import org.flywaydb.core.Flyway;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +12,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
+import com.example.demo.domain.model.Cozinha;
+import com.example.demo.domain.repository.CozinhaRepository;
+import com.example.demo.util.DatabaseCleaner;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
@@ -24,14 +27,25 @@ class CadastroCozinhaIT {
 	@LocalServerPort
 	private int port;
 	
+	@Autowired
+	private DatabaseCleaner databaseCleaner;
+	
+	@Autowired
+	private CozinhaRepository cozinhaRepository;
+	
 	@BeforeAll
 	public void allSetup() {
 		RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
 		RestAssured.port = port;
-		RestAssured.basePath = "/cozinhas";
+		RestAssured.basePath = "/cozinhas";				
 	}
 	
-	
+	@BeforeEach
+	public void eachSetup() {		
+		databaseCleaner.clearTables();
+		prepararDados();
+	}
+		
 	@Test
 	public void deveRetornarStatus200_QuandoConsultarCozinhas(){
 		
@@ -45,14 +59,14 @@ class CadastroCozinhaIT {
 	}
 	
 	@Test
-	public void deveConter4Cozinhas_QuandoConsultarCozinhas(){		
+	public void deveConter2Cozinhas_QuandoConsultarCozinhas(){		
 		
 		RestAssured.given()
 			.accept(ContentType.JSON)
 			.when()
 				.get()
 			.then()
-				.body("nome", Matchers.hasSize(4))
+				.body("nome", Matchers.hasSize(2))
 				.body("nome", Matchers.hasItems("Indiana", "Tailandesa"));
 				
 	}
@@ -68,6 +82,39 @@ class CadastroCozinhaIT {
 		.then()
 			.statusCode(HttpStatus.CREATED.value());
 			
+	}
+	
+	@Test
+	public void deveRetornarRespostaEStatusCorretos_QuandoConsultarCozinhaExistente() {
+		RestAssured.given()
+			.pathParam("cozinhaId", 2)
+			.accept(ContentType.JSON)
+		.when()
+			.get("/{cozinhaId}")
+		.then()
+			.statusCode(HttpStatus.OK.value())
+			.body("nome", Matchers.equalTo("Indiana"));
+	}
+	
+	@Test
+	public void deveRetornarStatus400_QuandoConsultarCozinhaInexistente() {
+		RestAssured.given()
+			.pathParam("cozinhaId", 99)
+			.accept(ContentType.JSON)
+		.when()
+			.get("/{cozinhaId}")
+		.then()
+			.statusCode(HttpStatus.NOT_FOUND.value());
+	}
+	
+	private void prepararDados() {
+		Cozinha cozinha1 = new Cozinha();
+		cozinha1.setNome("Tailandesa");
+		cozinhaRepository.save(cozinha1);
+		
+		Cozinha cozinha2 = new Cozinha();
+		cozinha2.setNome("Indiana");
+		cozinhaRepository.save(cozinha2);
 	}
 }
 	
