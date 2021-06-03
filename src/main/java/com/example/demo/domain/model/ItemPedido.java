@@ -10,8 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -36,7 +34,6 @@ public class ItemPedido {
 	
 	private String observacao;
 		
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(nullable = false, name = "pedido_id")
 	private Pedido pedido;

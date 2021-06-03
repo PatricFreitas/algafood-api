@@ -46,7 +46,7 @@ class CadastroCozinhaIT {
 		RestAssured.port = port;
 		RestAssured.basePath = "/cozinhas";			
 		
-		jsonCozinhaChinesa = ResourceUtils.getContentFromResource("/json/cozinha.json");
+		jsonCozinhaChinesa = ResourceUtils.getContentFromResource("/json/correto/cozinha.json");
 	}
 	
 	@BeforeEach
